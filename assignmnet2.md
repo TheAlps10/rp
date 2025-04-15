@@ -70,7 +70,11 @@
 <br>
 ![](k.png)
 
----
+
+![](l.png)<br>
+![](m.png)<br>
+![](n.png)<br>
+![](o.png)<br>
 
 ## 代码示例
 
@@ -96,6 +100,8 @@ plt.legend(wedges, labels, loc="center left", bbox_to_anchor=(1, 0, 0.5, 1))
 plt.axis('equal')
 plt.tight_layout()
 plt.show()
+
+
 
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
