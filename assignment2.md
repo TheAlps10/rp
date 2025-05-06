@@ -212,6 +212,181 @@ graph TD;
 
 长远来看，该事件将成为教育行业规范发展的重要转折点。推动行业建立更严格的教师资质认证体系与透明化监督机制，促使机构摒弃“流量优先”的发展模式，回归教学本质。同时，也提醒公众在选择教育服务时保持理性，不再盲目迷信名师光环，更注重教学实际效果与机构专业能力。只有多方共同努力，才能重塑教育行业诚信生态，实现健康可持续发展。
 
+
+# 采用搜索工具 API （serpapi）
+
+## 创建api key：
+d92f84b56f2f81053281a478f54c82ff4ee469d4d7c15860bf9cef6409a50d1b
+
+## 使用serpapi中Google Light Search API来抓取相关主题的文章链接和视频
+
+### 主题1: 25考研英一事变
+
+#### 在python中呈现链接：
+```python
+from serpapi import GoogleSearch
+import json
+
+def search_english_exam_incident():
+    # 设置搜索参数
+    params = {
+        "engine": "google_light",
+        "q": "25考研英一事变",
+        "location": "Austin, Texas, United States",
+        "google_domain": "google.com",
+        "hl": "en",
+        "gl": "us",
+        "api_key": "d92f84b56f2f81053281a478f54c82ff4ee469d4d7c15860bf9cef6409a50d1b"
+    }
+
+    # 执行搜索
+    search = GoogleSearch(params)
+    results = search.get_dict()
+    return results
+def display_results(results):
+    """格式化显示搜索结果"""
+    print("=" * 50)
+    print(f"搜索元数据:")
+    print(f"- 状态: {results['search_metadata']['status']}")
+    print(f"- 创建时间: {results['search_metadata']['created_at']}")
+    print(f"- 处理时间: {results['search_metadata']['processed_at']}")
+    print(f"- 总耗时: {results['search_metadata']['total_time_taken']}秒")
+    print("\n" + "=" * 50)
+    print("有机搜索结果:")
+    for result in results['organic_results']:
+        print(f"\n#{result['position']} {result['title']}")
+        print(f"链接: {result['link']}")
+        print(f"摘要: {result['snippet']}")
+        if 'date' in result:
+            print(f"日期: {result['date']}")
+
+def save_organic_results(results, filename='english_exam_incident_results.json'):
+    """保存有机搜索结果到JSON文件"""
+    organic_results = results.get('organic_results', [])
+    with open(filename, 'w', encoding='utf-8') as f:
+        json.dump(organic_results, f, ensure_ascii=False, indent=2)
+    print(f"\n有机搜索结果已保存到 {filename}")
+if __name__ == "__main__":
+    try:
+        # 执行搜索
+        search_results = search_english_exam_incident()
+
+        # 显示结果
+        display_results(search_results)
+
+        # 保存有机结果到JSON文件
+        save_organic_results(search_results)
+
+        # 可选：保存完整结果到另一个文件
+        with open('full_search_results.json', 'w', encoding='utf-8') as f:
+            json.dump(search_results, f, ensure_ascii=False, indent=2)
+        print("完整搜索结果已保存到 full_search_results.json")
+
+    except Exception as e:
+        print(f"发生错误: {e}")
+
+
+```
+
+## 使用serpapi中Google Light Search API来抓取相关主题的文章链接和视频
+
+### 主题2：郑州大学生夜骑开封
+
+#### 在python中呈现链接：
+```
+在python中呈现链接：
+代码：
+from serpapi import GoogleSearch
+
+def search_bing_for_zhengzhou_night_ride():
+    # 设置搜索参数
+    params = {
+        "engine": "bing",
+        "q": "郑州大学生夜骑开封",
+        "cc": "US",
+        "api_key": "d92f84b56f2f81053281a478f54c82ff4ee469d4d7c15860bf9cef6409a50d1b"
+    }
+
+    # 执行搜索
+    search = GoogleSearch(params)
+    results = search.get_dict()
+
+    return results
+
+def display_results(results):
+    """格式化显示搜索结果"""
+    print("=" * 50)
+    print(f"搜索元数据:")
+    print(f"- 状态: {results['search_metadata']['status']}")
+    print(f"- 创建时间: {results['search_metadata']['created_at']}")
+    print(f"- 处理时间: {results['search_metadata']['processed_at']}")
+    print(f"- 总耗时: {results['search_metadata']['total_time_taken']}秒")
+
+    print("\n" + "=" * 50)
+    print("视频结果:")
+    for video in results['inline_videos']['items']:
+        print(f"\n#{video['position']} {video['title']}")
+        print(f"来源: {video['platform']} ({video['channel']})")
+        print(f"时长: {video['duration']} | 观看次数: {video.get('views', 'N/A')}")
+        print(f"发布时间: {video['date']}")
+        print(f"链接: {video['link']}")
+
+    print("\n" + "=" * 50)
+    print("有机搜索结果:")
+    for result in results['organic_results']:
+        print(f"\n#{result['position']} {result['title']}")
+        print(f"链接: {result['link']}")
+        print(f"摘要: {result['snippet']}")
+        if 'date' in result:
+            print(f"日期: {result['date']}")
+if __name__ == "__main__":
+    # 执行搜索
+    search_results = search_bing_for_zhengzhou_night_ride()
+    # 显示结果
+    display_results(search_results)
+    # 可选：保存完整结果到JSON文件
+    import json
+    with open('zhengzhou_night_ride_results.json', 'w', encoding='utf-8') as f:
+        json.dump(search_results, f, ensure_ascii=False, indent=2)
+    print("\n完整结果已保存到 zhengzhou_night_ride_results.json")
+
+```
+
+请你仔细阅读提供的json格式的 “郑州大学生夜骑开封” 相关链接和视频素材，梳理事件从首次大学生骑行尝试到大规模热潮兴起的关键时间节点，按顺序列出事件发展脉络，形成简要的时间线大纲。
+
+---
+
+从这些链接摘要中提取涉及的主要主体（如大学生群体、开封市政府部门、共享单车企业等），分析他们在事件中的具体行为和举措，总结每个主体对事件发展的推动作用。
+
+---
+
+请你接着统计各链接来源平台，对比不同平台上相关内容的数量、发布时间和互动数据，判断哪个平台是事件的首发地，哪个平台对事件传播扩散作用最大。
+
+---
+
+再逐条分析链接摘要，判断公众对 “郑州大学生夜骑开封” 事件的情感倾向（正面、负面、中立），用表格形式呈现不同平台的情感分布情况，并附上典型评论作为依据。
+
+---
+
+请你深入挖掘事件背后的原因，结合大学生群体心理、城市文旅发展需求、社交媒体传播特性等因素，分析 “郑州大学生夜骑开封” 现象产生的深层次背景。
+
+---
+
+评估一下 “郑州大学生夜骑开封” 事件对开封城市形象、文旅产业的直接影响，包括客流量增长、旅游收入变化、城市知名度提升等方面。
+
+---
+
+分析该事件对大学生群体自身的影响，探讨是否会引发新的旅游消费模式、社交行为变化，以及对大学生健康和安全意识的影响。
+
+---
+
+接着从城市管理者、旅游从业者、教育工作者等不同角度，思考 “郑州大学生夜骑开封” 事件暴露出的城市管理、旅游服务、安全教育等领域问题，提出可能需要改进和完善的方向。
+
+---
+
+整合以上分析内容，撰写一篇完整的 “郑州大学生夜骑开封” 舆情分析报告，要求结构清晰，包含事件概述、发展过程、影响分析、预测及建议等等。
+
+
 ## 附录
 代码
 ```
