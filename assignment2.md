@@ -42,7 +42,29 @@
 ## 事件来源
 ### 2.1 传播频道
 
-考研英语田静舆情事件最初缘起于微博、小红书等社交平台。这些平台用户基数庞大，且年轻群体居多，考研学生活跃度高，是考生考后交流、分享感受的重要阵地。微博以其即时性、开放性和话题聚合性，能让信息迅速扩散；小红书则凭借社区互动氛围浓厚、图文笔记形式吸引用户参与讨论的特点，为舆情萌芽提供了土壤。
+考研英语田静舆情事件最初缘起于微博、小红书等社交平台。这些平台用户基数庞大，且年轻群体居多，考研学生活跃度高，是考生考后交流、分享感受的重要阵地。微博以其即时性、开放性和话题聚合性，能让信息迅速扩散；小红书则凭借社区互动氛围浓厚、图文笔记形式吸引用户参与讨论的特点，为舆情萌芽提供了土壤。<br>
+<br>
+传播流程如下：
+<br>
+```mermaid
+graph TD;
+    A[2024年12月21日<br>考研英语一考试结束] --> B[田静直播并于12月22日发文<br>称考试“略难但没有那么难<br>，难是因为没准备到位”];
+    B --> C[考生在微博、小红书等平台<br>吐槽，负面情绪积累];
+    C --> D[2025年2月24日<br>考研初试成绩公布，何凯文<br>晒89分、周思成晒77分，田<br>静未公布成绩];
+    D --> E[网友在考研论坛、微博超话<br>等讨论田静成绩，舆情初步<br>形成];
+    E --> F[3月5日<br>周思成质疑何凯文成绩造假];
+    F --> G[3月6日<br>何凯文账号私密，文都称<br>调查];
+    G --> H[3月8日<br>何凯文致歉，承认造假并<br>退圈];
+    H --> I[3月11日<br>田静发文回应无考试成绩，<br>称去背题，但此前直播称<br>做过阅读理解，言论矛盾];
+    I --> J[微博、小红书等平台话题阅<br>读量突破千万，田静考研成<br>绩争议登上热搜，舆情爆发];
+    J --> K[3月12日起<br>汤家凤连发视频怒怼田静，<br>质疑成绩和学历背景];
+    J --> L[3月13日<br>周思成声讨田静，指责被<br>其回应讽刺，与石雷鹏产生<br>矛盾，话题扩展];
+    K --> M[3月16 - 22日<br>石雷鹏、周思成隔空回应，<br>汤家凤坚持日更视频，启航<br>官网和田静社交媒体<br>变动被关注];
+    L --> M;
+    M --> N[3月22日<br>汤家凤总结发言，称此事告<br>一段落，但保留爆料可能，<br>舆情呈长尾效应];
+
+
+```
 
 ### 2.2 传播内容
 
@@ -194,24 +216,319 @@
 
 ### 流程图代码
 
-```mermaid
-graph TD;
-    A[2024年12月21日<br>考研英语一考试结束] --> B[田静直播并于12月22日发文称考试“略难但没有那么难，难是因为没准备到位”];
-    B --> C[考生在微博、小红书等平台吐槽，负面情绪积累];
-    C --> D[2025年2月24日<br>考研初试成绩公布，何凯文晒89分、周思成晒77分，田静未公布成绩];
-    D --> E[网友在考研论坛、微博超话等讨论田静成绩，舆情初步形成];
-    E --> F[3月5日<br>周思成质疑何凯文成绩造假];
-    F --> G[3月6日<br>何凯文账号私密，文都称调查];
-    G --> H[3月8日<br>何凯文致歉，承认造假并退圈];
-    H --> I[3月11日<br>田静发文回应无考试成绩，称去背题，但此前直播称做过阅读理解，言论矛盾];
-    I --> J[微博、小红书等平台话题阅读量突破千万，#田静考研成绩争议#登上热搜，舆情爆发];
-    J --> K[3月12日起<br>汤家凤连发视频怒怼田静，质疑成绩和学历背景];
-    J --> L[3月13日<br>周思成声讨田静，指责被其回应讽刺，与石雷鹏产生矛盾，话题扩展];
-    K --> M[3月16 - 22日<br>石雷鹏、周思成隔空回应，汤家凤坚持日更视频，启航官网和田静社交媒体变动被关注];
-    L --> M;
-    M --> N[3月22日<br>汤家凤总结发言，称此事告一段落，但保留爆料可能，舆情呈长尾效应];
 
 
 
+```
+2.	考研英语一事件发展热力图
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+from datetime import datetime
+# 设置中文字体
+plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
+plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
+# 事件数据
+events = [
+    ('2024-12-21', '英语一考试结束', '考试后初期', 1),
+    ('2024-12-21', '田静当晚直播回应', '考试后初期', 1),
+    ('2024-12-21', '石雷鹏批评同行对答案', '考试后初期', 1),
+    ('2024-12-22', '田静发文"略难但没有那么难"', '考试后初期', 1),
+    ('2025-02-24', '考研初试成绩公布', '成绩公布期', 2),
+    ('2025-02-25', '何凯文89分，周思成77分', '成绩公布期', 2),
+    ('2025-03-05', '周思成质疑何凯文成绩造假', '成绩公布期', 2),
+    ('2025-03-06', '何凯文账号私密，文都调查', '成绩公布期', 2),
+    ('2025-03-08', '何凯文致歉并退圈', '成绩公布期', 2),
+    ('2025-03-09', '石雷鹏回应田静成绩问题', '田静争议期', 3),
+    ('2025-03-11', '田静回应无考试成绩', '田静争议期', 3),
+    ('2025-03-12', '汤家凤开始质疑田静', '田静争议期', 3),
+    ('2025-03-13', '周思成声讨田静', '田静争议期', 3),
+    ('2025-03-17', '汤家凤质疑田静学历', '田静争议期', 3),
+    ('2025-03-20', '启航删除田静背景信息', '田静争议期', 3),
+    ('2025-03-21', '田静隐藏毕业院校', '田静争议期', 3),
+    ('2025-03-15', '周思成质疑石雷鹏', '教师矛盾期', 4),
+    ('2025-03-16', '石雷鹏呼吁停止骂战', '教师矛盾期', 4),
+    ('2025-03-17', '周思成继续质疑石雷鹏', '教师矛盾期', 4),
+    ('2025-03-22', '汤家凤总结发言', '事件收尾', 5)
+]
+# 创建DataFrame
+df = pd.DataFrame(events, columns=['date', 'description', 'phase', 'level'])
+df['date'] = pd.to_datetime(df['date'])
+# 获取唯一的阶段和日期
+phases = sorted(df['phase'].unique())
+date_range = pd.date_range(start=df['date'].min(), end=df['date'].max(), freq='D')
+# 创建热力图数据
+heatmap_data = np.zeros((len(phases), len(date_range)))
+# 填充数据
+for _, row in df.iterrows():
+    phase_idx = phases.index(row['phase'])
+    date_idx = list(date_range).index(row['date'])
+    heatmap_data[phase_idx, date_idx] = row['level']
+# 创建图形
+fig, ax = plt.subplots(figsize=(15, 8))
+# 创建热力图
+im = ax.imshow(heatmap_data, cmap='YlOrRd', aspect='auto')
+# 设置坐标轴
+# 每5天显示一个日期标签
+xticks = np.arange(0, len(date_range), 5)
+ax.set_xticks(xticks)
+ax.set_yticks(np.arange(len(phases)))
+ax.set_xticklabels([date_range[i].strftime('%Y-%m-%d') for i in xticks], rotation=45)
+ax.set_yticklabels(phases)
+# 添加数值标注
+for i in range(len(phases)):
+    for j in range(len(date_range)):
+        if heatmap_data[i, j] > 0:
+            text = ax.text(j, i, f'{int(heatmap_data[i, j])}',
+                         ha='center', va='center', color='black')
+# 添加颜色条
+cbar = ax.figure.colorbar(im, ax=ax)
+cbar.ax.set_ylabel('事件等级', rotation=-90, va="bottom")
+# 设置标题和标签
+plt.title('考研英语一事件发展热力图', fontsize=14, pad=20)
+plt.xlabel('日期', fontsize=12)
+plt.ylabel('事件阶段', fontsize=12)
+# 调整布局
+plt.tight_layout()
+# 保存图片
+plt.savefig('考研英语一事件热力图.png', dpi=300, bbox_inches='tight')
+plt.show() 
 
+3.	各平台信息发布量占比
+import matplotlib.pyplot as plt
+import numpy as np
+# 设置中文字体
+plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
+plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
+# 示例数据
+platforms = ['微博', '小红书', '考研论坛', '微信群', 'QQ群', '知乎']
+# 信息发布量
+post_counts = [1200, 800, 600, 400, 300, 500]
+# 话题讨论量
+discussion_counts = [3500, 1500, 1200, 800, 600, 1000]
+# 用户参与度（评论+转发+点赞）
+engagement_counts = [8500, 4000, 2500, 1500, 1200, 3000]
+# 创建图形
+fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(18, 6))
+# 1. 信息发布量饼图
+ax1.pie(post_counts, labels=platforms, autopct='%1.1f%%', startangle=90)
+ax1.set_title('各平台信息发布量占比', pad=20)
+# 2. 话题讨论量柱状图
+x = np.arange(len(platforms))
+width = 0.35
+ax2.bar(x, discussion_counts, width, label='讨论量')
+ax2.set_xticks(x)
+ax2.set_xticklabels(platforms, rotation=45)
+ax2.set_title('各平台话题讨论量对比', pad=20)
+ax2.legend()
+# 3. 用户参与度柱状图
+ax3.bar(x, engagement_counts, width, color='orange', label='参与度')
+ax3.set_xticks(x)
+ax3.set_xticklabels(platforms, rotation=45)
+ax3.set_title('各平台用户参与度对比', pad=20)
+ax3.legend()
+# 调整布局
+plt.tight_layout()
+# 保存图片
+plt.savefig('考研英语一事件平台传播分析.png', dpi=300, bbox_inches='tight')
+plt.show()
+# 创建单独的用户参与度饼图
+plt.figure(figsize=(10, 8))
+plt.pie(engagement_counts, labels=platforms, autopct='%1.1f%%', 
+        startangle=90, explode=(0.1, 0, 0, 0, 0, 0))
+plt.title('各平台用户参与度占比', pad=20)
+plt.tight_layout()
+plt.savefig('考研英语一事件用户参与度占比.png', dpi=300, bbox_inches='tight')
+plt.show() 
 
+4.	考研英语一事件情感分析_雷达图
+import matplotlib.pyplot as plt
+import numpy as np
+# 设置中文字体
+plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
+plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
+# 示例数据
+categories = ['负面情绪', '教育行业担忧', '支持声音', '中立态度', '质疑声音']
+values = [3500, 2800, 1200, 2000, 1800]  # 评论数量
+colors = ['#FF9999', '#FFCC99', '#99FF99', '#99CCFF', '#FF99CC']
+
+# 2. 雷达图
+plt.figure(figsize=(12, 8))
+ax = plt.subplot(111, polar=True)
+# 计算角度
+angles = np.linspace(0, 2*np.pi, len(categories), endpoint=False)
+angles = np.concatenate((angles, [angles[0]]))  # 闭合图形
+values = np.concatenate((values, [values[0]]))  # 闭合图形
+# 绘制雷达图
+ax.plot(angles, values, 'o-', linewidth=2)
+ax.fill(angles, values, alpha=0.25)
+# 设置标签
+ax.set_xticks(angles[:-1])
+ax.set_xticklabels(categories, fontsize=10)
+ax.set_title('情感倾向分布（雷达图）', pad=20, fontsize=14)
+plt.tight_layout()
+plt.savefig('考研英语一事件情感分析_雷达图.png', dpi=300, bbox_inches='tight')
+plt.show()
+
+5.	考研英语一事件情感分析_柱状图
+import matplotlib.pyplot as plt
+import numpy as np
+# 设置中文字体
+plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
+plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
+# 示例数据
+categories = ['负面情绪', '教育行业担忧', '支持声音', '中立态度', '质疑声音']
+values = [3500, 2800, 1200, 2000, 1800]  # 评论数量
+colors = ['#FF9999', '#FFCC99', '#99FF99', '#99CCFF', '#FF99CC']
+# 1. 柱状图
+plt.figure(figsize=(12, 8))
+plt.bar(categories, values, color=colors)
+plt.title('情感倾向分布（柱状图）', pad=20, fontsize=14)
+plt.ylabel('评论数量', fontsize=12)
+plt.xticks(rotation=45, fontsize=10)
+plt.yticks(fontsize=10)
+plt.tight_layout()
+plt.savefig('考研英语一事件情感分析_柱状图.png', dpi=300, bbox_inches='tight')
+plt.show()
+
+6.	考研英语一事件微博话题阅读量趋势
+import matplotlib.pyplot as plt
+import numpy as np
+from datetime import datetime, timedelta
+# 设置中文字体
+plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
+plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
+# 生成示例数据
+start_date = datetime(2024, 1, 1)
+dates = [start_date + timedelta(days=i) for i in range(30)]
+# 微博话题阅读量（万）
+read_counts = [10, 15, 25, 50, 100, 200, 350, 500, 800, 1200, 
+               1500, 1800, 2000, 2200, 2500, 2800, 3000, 3200, 
+               3500, 3800, 4000, 4200, 4500, 4800, 5000, 5200, 
+               5400, 5600, 5800, 6000]
+# 讨论量（万）
+discussion_counts = [1, 2, 4, 8, 15, 30, 50, 80, 120, 180, 
+                    220, 250, 280, 300, 320, 350, 380, 400, 
+                    420, 450, 480, 500, 520, 540, 560, 580, 
+                    600, 620, 640, 660]
+# 媒体报道数量
+media_counts = [2, 3, 5, 8, 12, 20, 30, 45, 60, 80, 
+                100, 120, 140, 160, 180, 200, 220, 240, 
+                260, 280, 300, 320, 340, 360, 380, 400, 
+                420, 440, 460, 480]
+# 创建图形
+plt.figure(figsize=(15, 8))
+# 绘制三条折线
+plt.plot(dates, read_counts, 'b-', linewidth=2, label='微博话题阅读量（万）')
+plt.plot(dates, discussion_counts, 'r-', linewidth=2, label='讨论量（万）')
+plt.plot(dates, media_counts, 'g-', linewidth=2, label='媒体报道数量')
+# 设置标题和标签
+plt.title('考研英语一事件舆情热度趋势', pad=20, fontsize=14)
+plt.xlabel('日期', fontsize=12)
+plt.ylabel('数量', fontsize=12)
+# 设置图例
+plt.legend(fontsize=10)
+# 设置x轴日期格式
+plt.gcf().autofmt_xdate()
+# 添加网格线
+plt.grid(True, linestyle='--', alpha=0.7)
+# 标记关键时间点
+key_points = [5, 10, 15, 20, 25]  # 示例关键时间点
+for point in key_points:
+    plt.axvline(x=dates[point], color='gray', linestyle='--', alpha=0.5)
+    plt.text(dates[point], max(read_counts), f'关键点{point+1}', 
+             rotation=90, verticalalignment='top')
+# 调整布局
+plt.tight_layout()
+# 保存图片
+plt.savefig('考研英语一事件舆情热度趋势.png', dpi=300, bbox_inches='tight')
+plt.show()
+# 创建单独的阅读量趋势图
+plt.figure(figsize=(15, 8))
+plt.plot(dates, read_counts, 'b-', linewidth=2)
+plt.title('考研英语一事件微博话题阅读量趋势', pad=20, fontsize=14)
+plt.xlabel('日期', fontsize=12)
+plt.ylabel('阅读量（万）', fontsize=12)
+plt.grid(True, linestyle='--', alpha=0.7)
+plt.gcf().autofmt_xdate()
+plt.tight_layout()
+plt.savefig('考研英语一事件阅读量趋势.png', dpi=300, bbox_inches='tight')
+plt.show() 
+
+7.	考研英语一事件综合分析
+import matplotlib.pyplot as plt
+import numpy as np
+from datetime import datetime, timedelta
+# 设置中文字体
+plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
+plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
+# 关键事件时间点
+events = [
+    {'date': '2025-02-24', 'event': '考研成绩公布', 'importance': 5},
+    {'date': '2025-02-25', 'event': '考生质疑英语一难度', 'importance': 4},
+    {'date': '2025-02-26', 'event': '微博话题#考研英语一#登上热搜', 'importance': 5},
+    {'date': '2025-02-27', 'event': '教育部门首次回应', 'importance': 4},
+    {'date': '2025-03-01', 'event': '知名教育专家发表评论', 'importance': 3},
+    {'date': '2025-03-03', 'event': '考生代表提交联名信', 'importance': 4},
+    {'date': '2025-03-05', 'event': '教育部门召开新闻发布会', 'importance': 5},
+    {'date': '2025-03-08', 'event': '媒体报道达到高峰', 'importance': 4},
+    {'date': '2025-03-10', 'event': '官方公布调查结果', 'importance': 5},
+    {'date': '2025-03-15', 'event': '事件逐渐平息', 'importance': 2}
+]
+# 转换为datetime对象
+for event in events:
+    event['date'] = datetime.strptime(event['date'], '%Y-%m-%d')
+# 生成热度数据（示例）
+start_date = events[0]['date']
+end_date = events[-1]['date']
+date_range = [start_date + timedelta(days=i) for i in range((end_date - start_date).days + 1)]
+heat_data = [0] * len(date_range)
+# 模拟热度变化
+for i, date in enumerate(date_range):
+    for event in events:
+        days_diff = (date - event['date']).days
+        if -2 <= days_diff <= 2:  # 事件前后2天热度较高
+            heat_data[i] += event['importance'] * (3 - abs(days_diff))
+# 创建图形和双y轴
+fig, ax1 = plt.subplots(figsize=(15, 8))
+ax2 = ax1.twinx()  # 创建第二个y轴
+# 绘制柱状图（事件重要性）
+event_dates = [event['date'] for event in events]
+importance = [event['importance'] for event in events]
+bars = ax1.bar(event_dates, importance, color='skyblue', alpha=0.7, label='事件重要性')
+ax1.set_ylabel('事件重要性指数', fontsize=12)
+ax1.set_ylim(0, max(importance) + 1)
+# 绘制折线图（舆情热度）
+line = ax2.plot(date_range, heat_data, 'r-', linewidth=2, label='舆情热度')
+ax2.set_ylabel('舆情热度', fontsize=12)
+# 添加事件标签（在柱状图内部）
+for bar, event in zip(bars, events):
+    height = bar.get_height()
+    # 计算文本位置（从顶部开始，每次下降0.8个单位）
+    text_y = height - 0.8
+    # 如果文本位置低于柱状图的一半，则从顶部重新开始
+    if text_y < height/2:
+        text_y = height - 0.8
+    ax1.text(bar.get_x() + bar.get_width()/2., text_y,
+             event['event'],
+             ha='center', va='top', fontsize=9, color='black',
+             bbox=dict(facecolor='white', alpha=0.7, edgecolor='none'))
+# 设置标题
+plt.title('考研英语一事件发展时间轴', pad=20, fontsize=14)
+# 设置x轴标签
+ax1.set_xlabel('日期', fontsize=12)
+# 合并图例
+lines1, labels1 = ax1.get_legend_handles_labels()
+lines2, labels2 = ax2.get_legend_handles_labels()
+ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper right')
+# 设置x轴日期格式
+plt.gcf().autofmt_xdate()
+# 添加网格线
+ax1.grid(True, linestyle='--', alpha=0.7)
+# 调整布局
+plt.tight_layout()
+# 保存图片
+plt.savefig('考研英语一事件综合分析.png', dpi=300, bbox_inches='tight')
+plt.show() 
+
+```
