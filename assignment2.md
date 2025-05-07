@@ -630,6 +630,12 @@ if __name__ == "__main__":
 <br>
 ![](pc/2-18.png)
 
+
+<br>
+<br>
+<br>
+
+
 # 2.	采用大模型 API（siliconflow+chatbox）
  ### 利用siliconflow先生成api密钥：
 
