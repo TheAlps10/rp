@@ -673,7 +673,7 @@ if __name__ == "__main__":
 ![](pc/2-41.png)
 
 ## 附录
-代码
+### 关于考研英语田静舆情事件相关代码
 ```
 1.	考研英语一事件发展热力图
 import pandas as pd
@@ -1000,6 +1000,202 @@ ax1.grid(True, linestyle='--', alpha=0.7)
 plt.tight_layout()
 # 保存图片
 plt.savefig('考研英语一事件综合分析.png', dpi=300, bbox_inches='tight')
-plt.show() 
+plt.show()
+
+
+```
+
+
+
+###  关于郑州大学生夜骑开封舆情事件相关代码
+```
+
+传播平台数据对比图代码
+
+import matplotlib.pyplot as plt
+# 数据
+platforms = ["抖音", "小红书", "微博", "校园社群", "B站"]
+data = {
+    "传播量": [5.2, 5, 1.5, 3, 1],  # 单位：亿次（播放量/阅读量/覆盖量）
+    "互动量": [1.8, 0.2, 0.3, 0.45, 0.1]  # 单位：亿次（直播互动/收藏/报名等）
+}
+# 绘制柱状图
+plt.figure(figsize=(12, 6))
+bar_width = 0.35
+r1 = plt.bar(platforms, data["传播量"], width=bar_width, label="传播量", color="#2E86C1")
+r2 = plt.bar([x + bar_width for x in range(len(platforms))], data["互动量"], width=bar_width, label="互动量", color="#3498DB")
+plt.title("各平台传播力与互动性对比", fontsize=14)
+plt.xlabel("平台", fontsize=12)
+plt.ylabel("数据量（亿次）", fontsize=12)
+plt.legend()
+# 添加数据标签
+for bar in r1 + r2:
+    height = bar.get_height()
+    plt.text(bar.get_x() + bar.get_width()/2., height, f'{height:.1f}', ha='center', va='bottom')
+plt.show()
+
+
+=================================================================================================================================
+
+
+情感倾向饼图代码
+
+
+
+mport matplotlib.pyplot as plt
+
+# 定义情感分类及占比（基于5000条评论分析）
+categories = ["正面情绪", "安全担忧", "规范建议"]
+percentages = [78, 15, 7]  # 占比百分比
+colors = ["#2ECC71", "#E74C3C", "#3498DB"]  # 配色方案（绿色-正面，红色-担忧，蓝色-建议）
+
+# 创建画布
+plt.figure(figsize=(8, 8))
+
+# 绘制饼图
+wedges, texts, autotexts = plt.pie(
+    percentages,
+    labels=categories,
+    colors=colors,
+    autopct=lambda p: f"{p:.1f}%" if p > 0 else "",  # 仅显示大于0的标签
+    startangle=140,  # 起始角度（调整饼图旋转）
+    wedgeprops={"width": 0.6, "edgecolor": "white"}  # 饼块宽度及边框
+)
+
+# 优化标签样式（字体大小、颜色）
+plt.setp(texts, fontsize=12)
+plt.setp(autotexts, fontsize=10, color="white")
+
+# 添加图表标题
+plt.title("舆情情感倾向分布", fontsize=14, pad=20)
+
+# 保持圆形比例
+plt.axis("equal")
+
+# 显示图表（或保存为图片）
+plt.show()
+
+=================================================================================================================================
+
+
+ 舆情传播趋势折线图代码
+
+
+
+import matplotlib.pyplot as plt
+from datetime import datetime
+
+# 定义时间节点及传播量（精确到小时，单位：亿次）
+time_points = [
+    datetime(2025, 4, 15, 12, 0),  # 活动发起
+    datetime(2025, 4, 15, 20, 0),  # 骑行出发
+    datetime(2025, 4, 16, 2, 0),   # 抵达开封
+    datetime(2025, 4, 16, 10, 0),  # 媒体报道
+    datetime(2025, 4, 17, 15, 0),  # 安全讨论
+    datetime(2025, 4, 23, 9, 0)    # 长尾效应
+]
+spread_volume = [0.1, 2, 5, 8, 3, 1]  # 对应时间点的话题覆盖量
+
+# 创建画布
+plt.figure(figsize=(12, 6))
+
+# 绘制折线图（带标记点）
+plt.plot(time_points, spread_volume, marker="o", markersize=6, color="#2980B9", linestyle="-", linewidth=2)
+
+# 添加图表标题及坐标轴标签
+plt.title("舆情传播趋势变化", fontsize=14, pad=20)
+plt.xlabel("时间节点", fontsize=12)
+plt.ylabel("话题覆盖量（亿次）", fontsize=12)
+
+# 旋转x轴时间标签，避免重叠
+plt.xticks(rotation=45, ha="right", rotation_mode="anchor")
+
+# 添加数据标签（在折线上方显示数值）
+for x, y in zip(time_points, spread_volume):
+    plt.text(x, y + 0.3, f"{y:.1f}", ha="center", fontsize=10, color="#34495E")
+
+# 添加网格线（辅助观察数据变化）
+plt.grid(linestyle="--", alpha=0.6, axis="y")
+
+# 优化图表边框
+plt.gca().spines["top"].set_visible(False)
+plt.gca().spines["right"].set_visible(False)
+
+# 显示图表（或保存为图片）
+plt.show()
+
+=================================================================================================================================
+
+时间轴可视化优化代码
+
+
+ import matplotlib.pyplot as plt
+from datetime import datetime
+from matplotlib.dates import date2num
+import matplotlib
+# 设置中文字体
+matplotlib.rcParams['font.sans-serif'] = ['SimHei']
+matplotlib.rcParams['axes.unicode_minus'] = False
+
+# 定义事件列表（时间字符串+事件描述）
+events = [
+    ("2025-04-15 12:00", "活动发起\n校园社群发布招募令\n报名人数200+"),
+    ("2025-04-15 20:00", "骑行出发\n抖音直播启动\n实时观看50万+"),
+    ("2025-04-16 02:00", "抵达开封\n鼓楼打卡\nUGC内容单日传播3亿次"),
+    ("2025-04-16 10:00", "媒体报道\n央视/人民日报转发\n微博热搜TOP3"),
+    ("2025-04-17 15:00", "安全讨论\n交警部门介入\n知乎深度分析发布"),
+    ("2025-04-23 09:00", "长尾效应\n高校成立骑行协会\n开封推出骑行专属优惠")
+]
+
+# 转换时间为matplotlib可识别的数值坐标
+times = [date2num(datetime.strptime(e[0], "%Y-%m-%d %H:%M")) for e in events]
+descriptions = [e[1] for e in events]
+
+# 创建画布（增大宽度，避免文本拥挤）
+plt.figure(figsize=(18, 6))  # 宽度增加到18英寸，适配更多事件
+
+# 绘制时间轴基线
+plt.hlines(y=0, xmin=times[0], xmax=times[-1], color="#3498DB", linewidth=2)
+
+# 绘制时间节点标记（使用enumerate获取索引i）
+for i, t in enumerate(times):  # 新增索引i
+    # 仅为第一个节点添加标签（避免重复标签）
+    label = "时间节点" if i == 0 else None
+    plt.plot(t, 0, "o", color="#2E86C1", markersize=10, zorder=5, label=label)
+    plt.vlines(t, ymin=-0.3, ymax=0, color="#2E86C1", linewidth=1.5)
+
+# 添加事件描述文本（上下交替，调整间距）
+for i, (t, desc) in enumerate(zip(times, descriptions)):
+    y_pos = 1.2 if i % 2 == 0 else -1.2  # 增大垂直间距，避免与标记重叠
+    plt.text(
+        t, y_pos, desc,
+        ha="center", va="center",
+        fontsize=10, wrap=True,  # wrap=True 自动换行
+        bbox=dict(facecolor="white", edgecolor="#E0E0E0", alpha=0.9)
+    )
+
+# 显示x轴时间标签（提取时间部分，如"12:00"）
+time_labels = [e[0][11:16] for e in events]  # 提取"HH:MM"部分
+plt.xticks(times, time_labels, fontsize=10, rotation=45, ha="right")  # 旋转45度，右对齐
+
+# 隐藏无关边框（仅保留底部轴线，方便标签对齐）
+plt.gca().spines["top"].set_visible(False)
+plt.gca().spines["right"].set_visible(False)
+plt.gca().spines["left"].set_visible(False)
+# 底部边框可选保留或隐藏，此处保留以对齐标签
+# plt.gca().spines["bottom"].set_visible(False)
+
+# 调整y轴范围（适配文本位置）
+plt.ylim(-2, 2)
+
+# 添加图表标题
+plt.title("舆情传播关键时间节点轴", fontsize=14, pad=30)
+
+# 关闭y轴刻度（仅保留x轴标签）
+plt.yticks([])  # 隐藏y轴刻度线和标签
+
+# 显示图表（或保存为图片）
+plt.show()
+
 
 ```
