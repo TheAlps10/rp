@@ -217,10 +217,19 @@ graph TD;
 
 ## 创建api key：
 d92f84b56f2f81053281a478f54c82ff4ee469d4d7c15860bf9cef6409a50d1b
+<br>
+![](pc/2-7.png)
+
+
 
 ## 使用serpapi中Google Light Search API来抓取相关主题的文章链接和视频
 
 ### 主题1: 25考研英一事变
+
+<br>
+![](pc/2-8.png)
+<br>
+![](pc/2-9.png)
 
 #### 在python中呈现链接：
 ```python
@@ -287,6 +296,15 @@ if __name__ == "__main__":
 
 
 ```
+
+
+结果展示：
+<br>
+![](pc/2-10.png)
+<br>
+![](pc/2-11.png)
+<br>
+![](pc/2-12.png)
 
 ## 使用serpapi中Google Light Search API来抓取相关主题的文章链接和视频
 
