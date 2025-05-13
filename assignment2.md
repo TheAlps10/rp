@@ -565,58 +565,95 @@ if __name__ == "__main__":
 在python中呈现链接：
 代码：
 from serpapi import GoogleSearch
+import json
+import os
 
-def search_bing_for_zhengzhou_night_ride():
-    # 设置搜索参数
+def search_bing(query, country_code=None):
     params = {
         "engine": "bing",
-        "q": "郑州大学生夜骑开封",
-        "cc": "US",
+        "q": query,
         "api_key": "d92f84b56f2f81053281a478f54c82ff4ee469d4d7c15860bf9cef6409a50d1b"
     }
 
-    # 执行搜索
+    if country_code:
+        params["cc"] = country_code
+
     search = GoogleSearch(params)
     results = search.get_dict()
-
     return results
+
+
+def save_to_json(data, filename="search_results.json"):
+    """保存结果到JSON文件"""
+    try:
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        print(f"结果已成功保存到 {os.path.abspath(filename)}")
+        return True
+    except Exception as e:
+        print(f"保存文件时出错: {str(e)}")
+        return False
+
 
 def display_results(results):
     """格式化显示搜索结果"""
-    print("=" * 50)
-    print(f"搜索元数据:")
-    print(f"- 状态: {results['search_metadata']['status']}")
-    print(f"- 创建时间: {results['search_metadata']['created_at']}")
-    print(f"- 处理时间: {results['search_metadata']['processed_at']}")
-    print(f"- 总耗时: {results['search_metadata']['total_time_taken']}秒")
+    # 搜索摘要
+    print("\n=== 搜索结果摘要 ===")
+    print(f"搜索状态: {results.get('search_metadata', {}).get('status', '未知')}")
+    print(f"处理时间: {results.get('search_metadata', {}).get('processed_at', '未知')}")
+    print(f"总结果数: {len(results.get('organic_results', []))}")
 
-    print("\n" + "=" * 50)
-    print("视频结果:")
-    for video in results['inline_videos']['items']:
-        print(f"\n#{video['position']} {video['title']}")
-        print(f"来源: {video['platform']} ({video['channel']})")
-        print(f"时长: {video['duration']} | 观看次数: {video.get('views', 'N/A')}")
-        print(f"发布时间: {video['date']}")
-        print(f"链接: {video['link']}")
+    # 有机结果
+    print("\n=== 前3个网页结果 ===")
+    for result in results.get('organic_results', [])[:3]:
+        print(f"\n标题: {result.get('title', '无标题')}")
+        print(f"日期: {result.get('date', '无日期')}")
+        print(f"链接: {result.get('link', '无链接')}")
+        print(f"摘要: {result.get('snippet', '无摘要')}")
 
-    print("\n" + "=" * 50)
-    print("有机搜索结果:")
-    for result in results['organic_results']:
-        print(f"\n#{result['position']} {result['title']}")
-        print(f"链接: {result['link']}")
-        print(f"摘要: {result['snippet']}")
-        if 'date' in result:
-            print(f"日期: {result['date']}")
+    # 图片结果
+    if 'inline_images' in results:
+        print("\n=== 图片结果 ===")
+        for image in results['inline_images'].get('items', [])[:3]:
+            print(f"\n标题: {image.get('title', '无标题')}")
+            print(f"来源: {image.get('source', {}).get('name', '未知')}")
+            print(f"缩略图: {image.get('thumbnail', '无缩略图')}")
+            print(f"详情链接: {image.get('link', '无链接')}")
+
+    # 视频结果
+    if 'inline_videos' in results:
+        print("\n=== 视频结果 ===")
+        for video in results['inline_videos'].get('items', [])[:3]:
+            print(f"\n标题: {video.get('title', '无标题')}")
+            print(f"平台: {video.get('platform', '未知')}")
+            print(f"时长: {video.get('duration', '未知')}")
+            print(f"观看量: {video.get('views', '未知')}")
+            print(f"链接: {video.get('link', '无链接')}")
+
+    # 相关搜索
+    if 'related_searches' in results:
+        print("\n=== 相关搜索建议 ===")
+        for related in results['related_searches'][:5]:
+            print(f"- {related.get('query', '')}")
+
+
 if __name__ == "__main__":
+    # 搜索参数
+    query = "郑州大学生夜骑开封"
+    country_code = "ZA"
+
     # 执行搜索
-    search_results = search_bing_for_zhengzhou_night_ride()
+    search_results = search_bing(query, country_code)
+
     # 显示结果
     display_results(search_results)
-    # 可选：保存完整结果到JSON文件
-    import json
-    with open('zhengzhou_night_ride_results.json', 'w', encoding='utf-8') as f:
-        json.dump(search_results, f, ensure_ascii=False, indent=2)
-    print("\n完整结果已保存到 zhengzhou_night_ride_results.json")
+
+    # 保存结果到JSON文件
+    output_file = "zhengzhou_night_ride_results.json"
+    if save_to_json(search_results, output_file):
+        print(f"\n提示：您可以在当前目录下的 {output_file} 文件中查看完整搜索结果")
+    else:
+        print("\n警告：结果保存失败，请检查文件权限或磁盘空间")
 
 ```
 
