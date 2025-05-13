@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>舆情洞察 - 实时监测与分析平台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+  
+  <!-- 配置Tailwind自定义颜色和字体 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#36D399',
+            warning: '#FFAA33',
+            danger: '#FF5252',
+            dark: '#1E293B',
+            'gray-light': '#F8FAFC',
+            'gray-medium': '#94A3B8'
+          },
+          fontFamily: {
+            inter: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .card-shadow {
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+      }
+      .nav-shadow {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+      }
+      .hover-scale {
+        transition: transform 0.3s ease;
+      }
+      .hover-scale:hover {
+        transform: scale(1.02);
+      }
+      .animate-fade-in {
+        animation: fadeIn 0.5s ease-in-out;
+      }
+      .animate-slide-up {
+        animation: slideUp 0.5s ease-out;
+      }
+      .animate-pulse-slow {
+        animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+      .timeline-line {
+        position: absolute;
+        left: 19px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background-color: #165DFF;
+      }
+      .timeline-dot {
+        position: absolute;
+        left: 12px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background-color: #165DFF;
+        border: 3px solid white;
+      }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body class="bg-gray-light font-inter text-dark">
+  <!-- 顶部导航栏 -->
+  <header class="sticky top-0 z-50 bg-white nav-shadow">
+    <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <i class="fa-solid fa-bolt text-primary text-2xl"></i>
+        <h1 class="text-xl font-bold text-primary">舆情洞察</h1>
+      </div>
+      
+      <nav class="hidden md:flex items-center space-x-6">
+        <a href="#" class="text-dark hover:text-primary transition-colors">首页</a>
+        <a href="#" class="text-dark hover:text-primary transition-colors">热点追踪</a>
+        <a href="#" class="text-dark hover:text-primary transition-colors">趋势分析</a>
+        <a href="#" class="text-dark hover:text-primary transition-colors">预警中心</a>
+        <a href="#" class="text-dark hover:text-primary transition-colors">数据报表</a>
+      </nav>
+      
+      <div class="flex items-center space-x-4">
+        <button class="hidden md:block px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
+          <i class="fa-solid fa-plus mr-2"></i>添加主题
+        </button>
+        <div class="relative">
+          <button class="p-2 rounded-full hover:bg-gray-100 transition-colors">
+            <i class="fa-solid fa-bell-o text-dark"></i>
+            <span class="absolute top-0 right-0 h-4 w-4 rounded-full bg-danger flex items-center justify-center">
+              <span class="text-white text-xs">3</span>
+            </span>
+          </button>
+        </div>
+        <div class="md:hidden">
+          <button class="p-2 rounded-lg hover:bg-gray-100 transition-colors" id="mobile-menu-button">
+            <i class="fa-solid fa-bars text-dark"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 移动端菜单 -->
+    <div class="md:hidden hidden bg-white border-t animate-fade-in" id="mobile-menu">
+      <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
+        <a href="#" class="py-2 text-dark hover:text-primary transition-colors">首页</a>
+        <a href="#" class="py-2 text-dark hover:text-primary transition-colors">热点追踪</a>
+        <a href="#" class="py-2 text-dark hover:text-primary transition-colors">趋势分析</a>
+        <a href="#" class="py-2 text-dark hover:text-primary transition-colors">预警中心</a>
+        <a href="#" class="py-2 text-dark hover:text-primary transition-colors">数据报表</a>
+        <button class="w-full px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
+          <i class="fa-solid fa-plus mr-2"></i>添加主题
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主要内容区域 -->
+  <main class="container mx-auto px-4 py-6">
+    <!-- 主题选择区域 -->
+    <section class="mb-8">
+      <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
+        <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold mb-4 md:mb-0">舆情监测中心</h2>
+        <div class="flex flex-wrap gap-3">
+          <button class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
+            <i class="fa-solid fa-plus mr-2"></i>添加监测主题
+          </button>
+          <button class="px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+            <i class="fa-solid fa-filter mr-2"></i>筛选条件
+          </button>
+          <button class="px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+            <i class="fa-solid fa-download mr-2"></i>导出数据
+          </button>
+        </div>
+      </div>
+      
+      <!-- 主题标签 -->
+      <div class="flex overflow-x-auto pb-4 mb-6 scrollbar-hide space-x-3">
+        <div class="flex-shrink-0 px-4 py-2 bg-primary text-white rounded-full flex items-center">
+          <span class="mr-2">25考研英语田静舆情事件</span>
+          <button class="text-white hover:text-white/80 transition-colors">
+            <i class="fa-solid fa-times-circle"></i>
+          </button>
+        </div>
+        <div class="flex-shrink-0 px-4 py-2 bg-primary text-white rounded-full flex items-center">
+          <span class="mr-2">郑州大学生夜骑开封</span>
+          <button class="text-white hover:text-white/80 transition-colors">
+            <i class="fa-solid fa-times-circle"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 主题概况 -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      <!-- 主题1概况 -->
+      <div class="bg-white rounded-xl p-6 card-shadow animate-slide-up">
+        <div class="flex items-center mb-4">
+          <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mr-4">
+            <i class="fa-solid fa-graduation-cap text-primary text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold">25考研英语田静舆情事件</h3>
+            <p class="text-gray-medium">2025年考研英语辅导教师田静因成绩争议引发的网络舆情事件</p>
+          </div>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-semibold mb-2">事件背景</h4>
+            <p class="text-gray-medium">2024年底，考研英语辅导名师田静参加研究生入学英语考试"英语一"。考试结束后，田静在直播和社交媒体上称考试"略难但没有那么难，难是因为没准备到位"，此言论与考生实际体验严重不符，引发考生不满。成绩公布阶段，田静以"未答题、仅看题"为由拒绝公布成绩，与其他迅速晒分的同行形成鲜明对比，进一步加剧了公众质疑。</p>
+          </div>
+          
+          <div>
+            <h4 class="font-semibold mb-2">主要争议点</h4>
+            <ul class="list-disc list-inside text-gray-medium space-y-1">
+              <li>田静作为考研英语辅导名师，参加考试却拒绝公布成绩，引发对其真实水平的质疑</li>
+              <li>考试结束后立即发表"考试不难"的言论，被认为不尊重考生实际体验</li>
+              <li>删除社交平台上"北京外国语大学"毕业院校信息，进一步加剧信任危机</li>
+              <li>同行介入使得事件升级，暴露考研培训行业"造神营销"乱象</li>
+            </ul>
+          </div>
+          
+          <div class="flex justify-between items-center mt-6">
+            <div class="flex items-center">
+              <span class="text-sm font-medium mr-2">相关话题热度：</span>
+              <div class="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div class="h-full bg-danger rounded-full" style="width: 89%"></div>
+              </div>
+              <span class="ml-2 text-danger font-semibold">89%</span>
+            </div>
+            <a href="#" class="text-primary hover:text-primary/80 transition-colors">查看详细报告 <i class="fa-solid fa-arrow-right ml-1"></i></a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 主题2概况 -->
+      <div class="bg-white rounded-xl p-6 card-shadow animate-slide-up" style="animation-delay: 0.1s">
+        <div class="flex items-center mb-4">
+          <div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center mr-4">
+            <i class="fa-solid fa-bicycle text-secondary text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold">郑州大学生夜骑开封</h3>
+            <p class="text-gray-medium">郑州高校学生自发组织的夜间骑行至开封的文化体验活动</p>
+          </div>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-semibold mb-2">事件背景</h4>
+            <p class="text-gray-medium">2024年11月，郑州多所高校学生自发组织了首次"夜骑开封"活动，学生们利用周末时间，从郑州骑行至开封，全程约70公里，沿途欣赏夜景，体验历史文化名城魅力。这一活动在社交媒体上迅速引发关注，吸引了越来越多学生参与，形成了独特的校园文化现象。</p>
+          </div>
+          
+          <div>
+            <h4 class="font-semibold mb-2">活动特点</h4>
+            <ul class="list-disc list-inside text-gray-medium space-y-1">
+              <li>通常在周五晚上出发，骑行约4-5小时到达开封</li>
+              <li>学生们在开封游览清明上河园、开封府等景点，品尝当地美食</li>
+              <li>活动以自愿、安全、环保为原则，多数由学生社团组织</li>
+              <li>不仅是一次体能挑战，更是一次文化体验和社交活动</li>
+            </ul>
+          </div>
+          
+          <div class="flex justify-between items-center mt-6">
+            <div class="flex items-center">
+              <span class="text-sm font-medium mr-2">相关话题热度：</span>
+              <div class="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div class="h-full bg-secondary rounded-full" style="width: 75%"></div>
+              </div>
+              <span class="ml-2 text-secondary font-semibold">75%</span>
+            </div>
+            <a href="#" class="text-primary hover:text-primary/80 transition-colors">查看详细报告 <i class="fa-solid fa-arrow-right ml-1"></i></a>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 事件时间线 -->
+    <section class="bg-white rounded-xl p-6 card-shadow mb-8 animate-slide-up">
+      <div class="flex items-center justify-between mb-8">
+        <h3 class="text-xl font-bold">事件发展时间线</h3>
+        <div class="flex space-x-2">
+          <button class="px-3 py-1 text-xs bg-primary text-white rounded-full">全部</button>
+          <button class="px-3 py-1 text-xs bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition-colors">考研英语</button>
+          <button class="px-3 py-1 text-xs bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition-colors">夜骑开封</button>
+        </div>
+      </div>
+      
+      <div class="relative">
+        <!-- 时间线 -->
+        <div class="timeline-line"></div>
+        
+        <!-- 时间点1 -->
+        <div class="relative pl-12 mb-8">
+          <div class="timeline-dot"></div>
+          <div class="bg-gray-light rounded-lg p-4 hover-scale">
+            <div class="flex items-center mb-2">
+              <span class="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">夜骑开封</span>
+              <span class="ml-3 text-sm text-gray-medium">2024-11-08</span>
+            </div>
+            <h4 class="font-semibold mb-2">郑州大学学生首次组织夜骑开封活动</h4>
+            <p class="text-gray-medium">郑州大学部分学生自发组织了首次"夜骑开封"活动，约30名学生参与，从郑州大学主校区出发，骑行至开封市区，游览了清明上河园等景点，活动持续约8小时。</p>
+          </div>
+        </div>
+        
+        <!-- 时间点2 -->
+        <div class="relative pl-12 mb-8">
+          <div class="timeline-dot"></div>
+          <div class="bg-gray-light rounded-lg p-4 hover-scale">
+            <div class="flex items-center mb-2">
+              <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">考研英语</span>
+              <span class="ml-3 text-sm text-gray-medium">2024-12-21</span>
+            </div>
+            <h4 class="font-semibold mb-2">25考研英语（一）考试举行</h4>
+            <p class="text-gray-medium">全国硕士研究生招生考试英语（一）科目举行，考试结束后考生普遍反映试题难度过高。田静直播称考试"略难但没有那么难，难是因为没准备到位"，引发考生不满。</p>
+          </div>
+        </div>
+        
+        <!-- 时间点3 -->
+        <div class="relative pl-12 mb-8">
+          <div class="timeline-dot"></div>
+          <div class="bg-gray-light rounded-lg p-4 hover-scale">
+            <div class="flex items-center mb-2">
+              <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">考研英语</span>
+              <span class="ml-3 text-sm text-gray-medium">2024-12-22</span>
+            </div>
+            <h4 class="font-semibold mb-2">#考研英语难#话题登上热搜第一</h4>
+            <p class="text-gray-medium">微博话题#考研英语难#阅读量突破10亿，大量考生分享考试体验，表达对试题难度的不满，同时质疑田静言论与实际考试难度不符。</p>
+          </div>
+        </div>
+        
+        <!-- 时间点4 -->
+        <div class="relative pl-12 mb-8">
+          <div class="timeline-dot"></div>
+          <div class="bg-gray-light rounded-lg p-4 hover-scale">
+            <div class="flex items-center mb-2">
+              <span class="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">夜骑开封</span>
+              <span class="ml-3 text-sm text-gray-medium">2024-12-28</span>
+            </div>
+            <h4 class="font-semibold mb-2">首篇"郑州大学生夜骑开封"小红书笔记发布</h4>
+            <p class="text-gray-medium">参与首次夜骑开封活动的郑州大学学生在小红书发布体验笔记，分享沿途风景和有趣经历，详细记录了骑行路线、时间安排和花费情况，引发其他学生兴趣。</p>
+          </div>
+        </div>
+        
+        <!-- 时间点5 -->
+        <div class="relative pl-12 mb-8">
+          <div class="timeline-dot"></div>
+          <div class="bg-gray-light rounded-lg p-4 hover-scale">
+            <div class="flex items-center mb-2">
+              <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">考研英语</span>
+              <span class="ml-3 text-sm text-gray-medium">2025-01-15</span>
+            </div>
+            <h4 class="font-semibold mb-2">田静拒绝公布考研成绩，引发争议</h4>
+            <p class="text-gray-medium">考研成绩公布后，田静以"未答题、仅看题"为由拒绝公布成绩，引发网友对其真实成绩的质疑。考研数学辅导老师汤家凤公开质疑，认为只要报名并进入考场，便不存在没有成绩之说，0分也是成绩。</p>
+          </div>
+        </div>
+        
+        <!-- 时间点6 -->
+        <div class="relative pl-12 mb-8">
+          <div class="timeline-dot"></div>
+          <div class="bg-gray-light rounded-lg p-4 hover-scale">
+            <div class="flex items-center mb-2">
+              <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">考研英语</span>
+              <span class="ml-3 text-sm text-gray-medium">2025-01-20</span>
+            </div>
+            <h4 class="font-semibold mb-2">田静与周思成矛盾激化舆情</h4>
+            <p class="text-gray-medium">考研英语老师周思成发布动态声讨田静，认为田静在回应考研分数争议的声明中讽刺自己，双方矛盾激化，舆情进一步升温。</p>
+          </div>
+        </div>
+        
+        <!-- 时间点7 -->
+        <div class="relative pl-12 mb-8">
+          <div class="timeline-dot"></div>
+          <div class="bg-gray-light rounded-lg p-4 hover-scale">
+            <div class="flex items-center mb-2">
+              <span class="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">夜骑开封</span>
+              <span class="ml-3 text-sm text-gray-medium">2025-02-15</span>
+            </div>
+            <h4 class="font-semibold mb-2">开封文旅局注意到夜骑现象，开始研究相关政策</h4>
+            <p class="text-gray-medium">开封市文化广电和旅游局关注到郑州大学生夜骑开封的现象，开始研究如何将这一活动打造成文化旅游新品牌，同时保障学生安全和旅游秩序。</p>
+          </div>
+        </div>
+        
+        <!-- 时间点8 -->
+        <div class="relative pl-12 mb-8">
+          <div class="timeline-dot"></div>
+          <div class="bg-gray-light rounded-lg p-4 hover-scale">
+            <div class="flex items-center mb-2">
+              <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">考研英语</span>
+              <span class="ml-3 text-sm text-gray-medium">2025-03-10</span>
+            </div>
+            <h4 class="font-semibold mb-2">田静删除"北京外国语大学"毕业信息</h4>
+            <p class="text-gray-medium">在舆论压力下，田静悄然删除社交平台上的"北京外国语大学"毕业院校信息，引发更多质疑，舆情热度达到顶峰。</p>
+          </div>
+        </div>
+        
+        <!-- 时间点9 -->
+        <div class="relative pl-12 mb-8">
+          <div class="timeline-dot"></div>
+          <div class="bg-gray-light rounded-lg p-4 hover-scale">
+            <div class="flex items-center mb-2">
+              <span class="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">夜骑开封</span>
+              <span class="ml-3 text-sm text-gray-medium">2025-03-20</span>
+            </div>
+            <h4 class="font-semibold mb-2">开封文旅局官方微博欢迎郑州大学生夜骑</h4>
+            <p class="text-gray-medium">开封市文化广电和旅游局官方微博发文，对郑州大学生夜骑开封表示欢迎，并为学生们提供了免费参观部分景点的优惠政策，同时提醒学生注意安全。</p>
+          </div>
+        </div>
+        
+        <!-- 时间点10 -->
+        <div class="relative pl-12 mb-8">
+          <div class="timeline-dot"></div>
+          <div class="bg-gray-light rounded-lg p-4 hover-scale">
+            <div class="flex items-center mb-2">
+              <span class="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">夜骑开封</span>
+              <span class="ml-3 text-sm text-gray-medium">2025-04-20</span>
+            </div>
+            <h4 class="font-semibold mb-2">"郑州大学生夜骑开封"话题登上热搜</h4>
+            <p class="text-gray-medium">随着参与人数增多，"郑州大学生夜骑开封"成为社交媒体热门话题，相关视频在抖音、B站等平台播放量突破百万，引发全国关注。</p>
+          </div>
+        </div>
+        
+        <!-- 时间点11 -->
+        <div class="relative pl-12">
+          <div class="timeline-dot"></div>
+          <div class="bg-gray-light rounded-lg p-4 hover-scale">
+            <div class="flex items-center mb-2">
+              <span class="px-2 py-1 bg-danger/10 text-danger text-xs rounded-full">综合</span>
+              <span class="ml-3 text-sm text-gray-medium">2025-05-05</span>
+            </div>
+            <h4 class="font-semibold mb-2">教育部门提醒学生注意夜骑安全</h4>
+            <p class="text-gray-medium">随着"郑州大学生夜骑开封"活动热度上升，教育部门发布安全提示，提醒学生夜间骑行注意交通安全，做好防护措施，避免疲劳骑行。郑州市和开封市相关部门联合制定了夜骑安全保障方案。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 数据概览 -->
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <!-- 数据卡片1 -->
+      <div class="bg-white rounded-xl p-6 card-shadow hover-scale">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-gray-medium font-medium">热度指数</h3>
+          <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
+            <i class="fa-solid fa-arrow-up mr-1"></i>15%
+          </span>
+        </div>
+        <div class="flex items-end">
+          <span class="text-4xl font-bold">89.2</span>
+          <span class="ml-2 text-gray-medium mb-1">/ 100</span>
+        </div>
+        <div class="mt-4 h-16">
+          <canvas id="trendChart1"></canvas>
+        </div>
+      </div>
+      
+      <!-- 数据卡片2 -->
+      <div class="bg-white rounded-xl p-6 card-shadow hover-scale">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-gray-medium font-medium">相关文章</h3>
+          <span class="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">
+            <i class="fa-solid fa-arrow-up mr-1"></i>32%
+          </span>
+        </div>
+        <div class="flex items-end">
+          <span class="text-4xl font-bold">1,876</span>
+        </div>
+        <div class="mt-4 h-16">
+          <canvas id="trendChart2"></canvas>
+        </div>
+      </div>
+      
+      <!-- 数据卡片3 -->
+      <div class="bg-white rounded-xl p-6 card-shadow hover-scale">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-gray-medium font-medium">正面情绪</h3>
+          <span class="px-2 py-1 bg-warning/10 text-warning text-xs rounded-full">
+            <i class="fa-solid fa-arrow-down mr-1"></i>7%
+          </span>
+        </div>
+        <div class="flex items-end">
+          <span class="text-4xl font-bold">38.5%</span>
+        </div>
+        <div class="mt-4 h-16">
+          <canvas id="trendChart3"></canvas>
+        </div>
+      </div>
+      
+      <!-- 数据卡片4 -->
+      <div class="bg-white rounded-xl p-6 card-shadow hover-scale">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-gray-medium font-medium">负面情绪</h3>
+          <span class="px-2 py-1 bg-danger/10 text-danger text-xs rounded-full">
+            <i class="fa-solid fa-arrow-up mr-1"></i>12%
+          </span>
+        </div>
+        <div class="flex items-end">
+          <span class="text-4xl font-bold">36.8%</span>
+        </div>
+        <div class="mt-4 h-16">
+          <canvas id="trendChart4"></canvas>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 主要内容布局 -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- 左侧：趋势分析 -->
+      <div class="lg:col-span-1 space-y-8">
+        <!-- 热度趋势 -->
+        <div class="bg-white rounded-xl p-6 card-shadow animate-slide-up">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-lg font-bold">热度趋势分析</h3>
+            <div class="flex space-x-2">
+              <button class="px-3 py-1 text-xs bg-primary text-white rounded-full">日</button>
+              <button class="px-3 py-1 text-xs bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition-colors">周</button>
+              <button class="px-3 py-1 text-xs bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition-colors">月</button>
+            </div>
+          </div>
+          <div class="h-80">
+            <canvas id="heatTrendChart"></canvas>
+          </div>
+        </div>
+        
+        <!-- 情感分析 -->
+        <div class="bg-white rounded-xl p-6 card-shadow animate-slide-up" style="animation-delay: 0.1s">
+          <h3 class="text-lg font-bold mb-6">情感分析</h3>
+          <div class="h-80">
+            <canvas id="sentimentChart"></canvas>
+          </div>
+        </div>
+        
+        <!-- 来源分布 -->
+        <div class="bg-white rounded-xl p-6 card-shadow animate-slide-up" style="animation-delay: 0.2s">
+          <h3 class="text-lg font-bold mb-6">来源分布</h3>
+          <div class="h-80">
+            <canvas id="sourceChart"></canvas>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 右侧：最新动态 -->
+      <div class="lg:col-span-2 space-y-8">
+        <!-- 主题对比 -->
+        <div class="bg-white rounded-xl p-6 card-shadow animate-slide-up">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-lg font-bold">主题对比分析</h3>
+            <div class="flex space-x-2">
+              <button class="px-3 py-1 text-xs bg-primary text-white rounded-full">今日</button>
+              <button class="px-3 py-1 text-xs bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition-colors">本周</button>
+              <button class="px-3 py-1 text-xs bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition-colors">本月</button>
+            </div>
+          </div>
+          <div class="h-64">
+            <canvas id="comparisonChart"></canvas>
+          </div>
+        </div>
+        
+        <!-- 最新动态 -->
+        <div class="bg-white rounded-xl p-6 card-shadow animate-slide-up" style="animation-delay: 0.1s">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-lg font-bold">最新动态</h3>
+            <div class="flex items-center">
+              <span class="text-sm text-gray-medium mr-2">刷新于 10分钟前</span>
+              <button class="p-2 rounded-full hover:bg-gray-100 transition-colors">
+                <i class="fa-solid fa-refresh text-dark"></i>
+              </button>
+            </div>
+          </div>
+          
+          <!-- 动态列表 -->
+          <div class="space-y-6">
+            <!-- 动态项1 -->
+            <div class="border-l-4 border-primary pl-4 py-2 hover-scale">
+              <div class="flex items-center mb-2">
+                <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">微博</span>
+                <span class="ml-3 text-sm text-gray-medium">2025-05-09 14:30</span>
+                <span class="ml-auto px-2 py-1 bg-danger/10 text-danger text-xs rounded-full">
+                  <i class="fa-solid fa-arrow-up mr-1"></i>热度上升
+                </span>
+              </div>
+              <h4 class="font-semibold mb-2">考研名师田静删除北外学历信息，网友质疑学历真实性</h4>
+              <p class="text-gray-medium mb-3">近日，考研英语名师田静在社交媒体上删除了"北京外国语大学"相关学历信息，引发网友对其学历真实性的质疑。有网友翻出田静早年视频，其自称是北外英语学院毕业，但目前北外官网已无法查询到相关信息。</p>
+              <div class="flex items-center text-sm text-gray-medium">
+                
