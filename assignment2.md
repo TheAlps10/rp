@@ -474,7 +474,7 @@ graph TD;
 <span id="采用搜索工具API（serpapi）"></span>
 # 1.     采用搜索工具 API （serpapi）
 
-## 创建api key：
+创建api key：
 d92f84b56f2f81053281a478f54c82ff4ee469d4d7c15860bf9cef6409a50d1b
 <br>
 ![](pc/2-7.png)
@@ -687,11 +687,11 @@ if __name__ == "__main__":
 
 
 # 2.	采用大模型 API（siliconflow+chatbox）
- ### 利用siliconflow先生成api密钥：
+ ##利用siliconflow先生成api密钥：
 
 ![](pc/2-19.png)
 
-### 结合siliconflow中的api对chabox进行连接设置：
+## 结合siliconflow中的api对chabox进行连接设置：
 
 ![](pc/2-20.png)
 
@@ -753,6 +753,7 @@ if __name__ == "__main__":
 ![](pc/2-32.png)
 
 ## 主题2：郑州大学生夜骑开封
+ ### 提示词：
 <strong>请你仔细阅读提供的json格式的 “郑州大学生夜骑开封” 相关链接和视频素材，梳理事件从首次大学生骑行尝试到大规模热潮兴起的关键时间节点，按顺序列出事件发展脉络，形成简要的时间线大纲。</strong>
 
 ![](pc/2-33.png)
@@ -794,9 +795,9 @@ if __name__ == "__main__":
 <br>
 
 
-## 附录
+# 附录
 <span id="关于考研英语田静舆情事件相关代码"></span>
-### 关于考研英语田静舆情事件相关代码
+## 关于考研英语田静舆情事件相关代码
 ```
 1.	考研英语一事件发展热力图
 import pandas as pd
@@ -1130,7 +1131,7 @@ plt.show()
 
 <span id="7附录"></span>
 <span id="关于郑州大学生夜骑开封舆情事件相关代码"></span>
-###  关于郑州大学生夜骑开封舆情事件相关代码
+##  关于郑州大学生夜骑开封舆情事件相关代码
 ```
 
 传播平台数据对比图代码
