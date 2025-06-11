@@ -1166,7 +1166,7 @@ plt.show()
 
 
 
-mport matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 # 定义情感分类及占比（基于5000条评论分析）
 categories = ["正面情绪", "安全担忧", "规范建议"]
